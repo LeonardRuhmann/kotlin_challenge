@@ -1,14 +1,23 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-fun main() {
-    val name = "Kotlin"
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-    // to see how IntelliJ IDEA suggests fixing it.
-    println("Hello, " + name + "!")
+fun calculateReadingPercetage(bookName: String, totalPages: Int, pagesRead: Int): Any {
 
-    for (i in 1..5) {
-        //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-        // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        println("i = $i")
+    if (bookName != "" && totalPages > 0 && pagesRead >= 0) {
+        if(totalPages < pagesRead){
+            return println("You can't read more pages than the total")
+        }
+        val percetage = (pagesRead.toDouble() / totalPages * 100).toInt()
+        return println("You read $percetage% of $bookName")
+    } else {
+        return println("Please check the book information")
     }
+}
+
+fun main() {
+    println("What's the name of your book?")
+    val bookName = readln()
+    println("How many pages?")
+    val totalPages = readln().toInt()
+    println("Pages read?")
+    val pagesRead = readln().toInt()
+    calculateReadingPercetage(bookName, totalPages, pagesRead);
+
 }
