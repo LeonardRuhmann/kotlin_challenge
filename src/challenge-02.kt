@@ -9,6 +9,17 @@ data class Book(
     fun readingProgression(): Int {
         return ((pagesRead.toDouble() / totalPages) * 100).toInt()
     }
+
+    fun updatePagesRead(pages: Int) {
+        if (pages < 0) {
+            println("Invalid page count. It must be a positive number.")
+            return
+        }
+        pagesRead += pages
+        if (pagesRead > totalPages) {
+            pagesRead = totalPages
+        }
+    }
 }
 
 val library = mutableListOf<Book>()
@@ -18,43 +29,47 @@ fun addBook(book: Book) {
     library.add(book)
 }
 
-fun consultBook(bookName: String): List<Book> {
+fun findBookByName(bookName: String): List<Book> {
     return library.filter { it.bookName.equals(bookName, ignoreCase = true) }
 }
 
-fun consultGender(gender: String): List<Book> {
+fun findBookByGender(gender: String): List<Book> {
     return library.filter { it.gender.equals(gender, ignoreCase = true) }
 }
 
-fun consultAuthor(author: String): List<Book> {
+fun findBookByAuthor(author: String): List<Book> {
     return library.filter { it.author.equals(author, ignoreCase = true) }
 }
 
 fun updatePagesRead(bookName: String, updatedPagesRead: Int) {
     val book = library.find { it.bookName.equals(bookName, ignoreCase = true) }
-    book?.let {
-        it.pagesRead += updatedPagesRead
-        if (it.pagesRead > it.totalPages) {
-            it.pagesRead = it.totalPages
-        }
+    if (book != null) {
+        book.updatePagesRead(updatedPagesRead)
+        println("Pages updated.")
+    } else {
+        println("Book not found!")
     }
 }
 
+fun showMenu() {
+    println("\nMenu:")
+    println("0. Add Book")
+    println("1. Consult Book")
+    println("2. Consult Gender")
+    println("3. Consult Author")
+    println("4. Update Pages Read")
+    println("5. See Reading Progression")
+    println("6. Exit")
+
+}
 
 fun main() {
     while (true) {
-        println("\nMenu:")
-        println("0. Add Book")
-        println("1. Consult Book")
-        println("2. Consult Gender")
-        println("3. Consult Author")
-        println("4. Update Pages Read")
-        println("5. See Reading Progression")
-        println("6. Exit")
-        print("Choose one option:")
+        showMenu()
+        print("Choose one option: ")
 
-
-        when (readLine()?.toInt()) {
+        val option = readLine()?.toIntOrNull()
+        when (option) {
             0 -> {
                 print("Book name: ")
                 val bookName = readln()
@@ -63,51 +78,74 @@ fun main() {
                 print("Author: ")
                 val author = readln()
                 print("Total Pages: ")
-                val totalPages: Int = readln().toInt()
+                val totalPages = readln().toIntOrNull()
 
-                val book = Book(bookName, gender, author, totalPages)
-                addBook(book)
-                println("The book was added successfully")
+                if (totalPages != null && totalPages > 0) {
+                    val book = Book(bookName, gender, author, totalPages)
+                    addBook(book)
+                    println("The book was added successfully")
+                } else {
+                    println("Invalid number of total pages")
+                }
             }
 
             1 -> {
                 print("Book name: ")
                 val bookName: String = readln()
-                val books = consultBook(bookName)
-                books.forEach { println(it) }
+                val books = findBookByName(bookName)
+                if(books.isEmpty()) {
+                    println("No books found by that name")
+                } else {
+                    books.forEach { println(it) }
+                }
             }
 
             2 -> {
                 print("Gender: ")
                 val gender = readln()
-                val books = consultGender(gender)
-                books.forEach { println(it) }
+                val books = findBookByGender(gender)
+                if (books.isEmpty()) {
+                    println("No books found by that gender.")
+                } else {
+                    books.forEach { println(it) }
+                }
             }
 
             3 -> {
                 print("Author: ")
                 val author = readln()
-                val books = consultAuthor(author)
-                books.forEach { println(it) }
+                val books = findBookByAuthor((author))
+                if (books.isEmpty()) {
+                    println("No books found by that author")
+                } else {
+                    books.forEach { println(it) }
+                }
             }
 
             4 -> {
                 print("Book name: ")
                 val bookName = readln()
                 print("Pages Read: ")
-                val pagesRead = readln().toInt()
-                updatePagesRead(bookName, pagesRead)
-                print("Pages updated")
+                val pagesRead = readln().toIntOrNull()
+
+                if (pagesRead != null && pagesRead >= 0) {
+                    updatePagesRead(bookName, pagesRead)
+                } else {
+                    println("Invalid page count.")
+                }
             }
 
             5 -> {
                 print("Book name: ")
                 val bookName = readln()
                 val book = library.find { it.bookName.equals(bookName, ignoreCase = true) }
-                book?.let {
-                    val progress = it.readingProgression()
+                if (book != null) {
+                    val progress = book.readingProgression()
                     println("Reading Progress: $progress%")
-                } ?: println("Book not found!")
+
+                } else {
+                    println("Book not found!")
+                }
             }
 
             6 -> {
